@@ -247,7 +247,10 @@ const bannerSlideStyle = computed(() => {
 })
 
 function productCategory(p: Record<string, unknown>): string {
-  return String(p.category_name ?? p.category ?? '')
+  const c = p.category_name ?? p.category
+  if (typeof c === 'string') return c
+  if (c && typeof c === 'object' && 'name' in c) return String((c as { name: unknown }).name)
+  return ''
 }
 
 function productImage(p: Record<string, unknown>): string {
