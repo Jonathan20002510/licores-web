@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <!-- Zona morada superior: buscador + filtros (como Flutter) -->
+    <!-- Un solo bloque: Licores + buscador + categorías (mismo gradiente, sin separación) -->
     <header class="header-gradient">
       <div class="header-inner">
         <h1 class="header-title">Licores</h1>
@@ -38,23 +38,22 @@
         <span v-if="hasPriceFilter" class="chip">{{ priceFilterText }}</span>
         <span v-if="hasAlcoholFilter" class="chip">{{ alcoholFilterText }}</span>
       </div>
-    </header>
-
-    <!-- Categorías (gradiente morado, chips horizontales) -->
-    <div class="categories-wrap">
-      <div class="categories-scroll">
-        <button
-          v-for="cat in categories"
-          :key="cat"
-          type="button"
-          class="category-chip"
-          :class="{ selected: selectedCategory === cat }"
-          @click="selectedCategory = cat"
-        >
-          {{ cat }}
-        </button>
+      <!-- Categorías dentro del mismo bloque (sin cambio de color) -->
+      <div class="categories-inner">
+        <div class="categories-scroll">
+          <button
+            v-for="cat in categories"
+            :key="cat"
+            type="button"
+            class="category-chip"
+            :class="{ selected: selectedCategory === cat }"
+            @click="selectedCategory = cat"
+          >
+            {{ cat }}
+          </button>
+        </div>
       </div>
-    </div>
+    </header>
 
     <div v-if="loading && products.length === 0" class="loading">Cargando...</div>
     <div v-else-if="loadError && products.length === 0" class="error-state">
@@ -415,11 +414,8 @@ onUnmounted(() => {
   font-size: 12px; font-weight: 600;
 }
 
-/* Categorías */
-.categories-wrap {
-  background: linear-gradient(135deg, #4A148C 0%, #6A1B9A 25%, #8A2BE2 50%, #9C4EDD 75%, #AB47BC 100%);
-  padding: 10px 0 12px;
-}
+/* Categorías (mismo bloque, sin fondo aparte) */
+.categories-inner { padding-top: 4px; padding-bottom: 12px; }
 .categories-scroll {
   display: flex; gap: 10px; overflow-x: auto; padding: 0 12px;
   scrollbar-width: none; -ms-overflow-style: none;
@@ -428,7 +424,7 @@ onUnmounted(() => {
 .category-chip {
   flex-shrink: 0; padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer;
   font-size: 14px; font-weight: 600; white-space: nowrap;
-  background: #fff; color: #333;
+  background: rgba(255,255,255,0.95); color: #333;
 }
 .category-chip.selected {
   background: linear-gradient(135deg, #B8860B, #DAA520, #FFD700, #FFE44D, #FFF176);

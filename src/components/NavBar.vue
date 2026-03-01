@@ -1,9 +1,21 @@
 <template>
   <nav v-if="showNav" class="nav">
-    <router-link to="/home" class="nav-link">Inicio</router-link>
-    <router-link to="/orders" class="nav-link">Pedidos</router-link>
-    <router-link to="/cart" class="nav-link">Carrito</router-link>
-    <router-link to="/profile" class="nav-link">Tú</router-link>
+    <router-link to="/home" class="nav-link">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Inicio</span>
+    </router-link>
+    <router-link to="/orders" class="nav-link">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Pedidos</span>
+    </router-link>
+    <router-link to="/cart" class="nav-link">
+      <span class="nav-icon">🛒</span>
+      <span class="nav-label">Carrito</span>
+    </router-link>
+    <router-link to="/profile" class="nav-link">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Tú</span>
+    </router-link>
   </nav>
 </template>
 
@@ -29,18 +41,51 @@ const showNav = computed(() => {
   right: 0;
   display: flex;
   justify-content: space-around;
-  padding: 0.5rem 0;
+  align-items: center;
+  padding: 0.5rem 0 0.6rem;
+  padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
   background: #fff;
   border-top: 1px solid #eee;
   z-index: 100;
 }
 .nav-link {
-  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #666;
   text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-link:hover {
+  color: #8a2be2;
 }
 .nav-link.router-link-active {
   color: #8a2be2;
   font-weight: 700;
+}
+.nav-link.router-link-active .nav-icon {
+  background: #8a2be2;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(138, 43, 226, 0.35);
+}
+.nav-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  background: #f0f0f0;
+  color: #666;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.nav-label {
+  line-height: 1.2;
 }
 </style>
