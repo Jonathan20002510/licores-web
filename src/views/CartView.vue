@@ -329,6 +329,7 @@ async function placeOrder() {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+  text-align: left;
 }
 
 /* Estado vacío */
@@ -409,12 +410,15 @@ async function placeOrder() {
   padding: 0 16px 16px 280px;
   box-sizing: border-box;
   max-width: 100%;
+  text-align: left;
 }
 .cart-card {
   display: flex;
   align-items: stretch;
   gap: 12px;
   margin-bottom: 16px;
+  margin-left: 0;
+  margin-right: 0;
   padding: 16px;
   background: #fff;
   border-radius: 20px;
@@ -423,6 +427,7 @@ async function placeOrder() {
   max-width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  text-align: left;
 }
 .cart-card-img-wrap {
   flex-shrink: 0;
@@ -437,6 +442,7 @@ async function placeOrder() {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 .cart-card-body {
   flex: 1 1 0%;
@@ -445,7 +451,9 @@ async function placeOrder() {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 6px;
+  text-align: left;
 }
 .cart-card-name {
   margin: 0;
@@ -458,12 +466,15 @@ async function placeOrder() {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   line-height: 1.3;
+  text-align: left;
+  width: 100%;
 }
 .cart-card-price {
   margin: 0;
   font-size: 14px;
   color: #666;
   flex-shrink: 0;
+  text-align: left;
 }
 .cart-card-qty {
   display: inline-flex;
