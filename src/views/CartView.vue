@@ -300,7 +300,7 @@ async function placeOrder() {
     const orderId = order?.id
     cartStore.clear()
     if (orderId != null) {
-      await router.push(`/orders/${orderId}`)
+      await router.push(`/orders/${orderId}/payment`)
     } else {
       await router.push('/orders')
     }
