@@ -407,7 +407,7 @@ async function placeOrder() {
 
 /* Lista productos */
 .cart-list {
-  padding: 0 16px 16px 280px;
+  padding: 0 16px 280px 16px; /* top right bottom left: espacio abajo para el footer, márgenes laterales iguales */
   box-sizing: border-box;
   max-width: 100%;
   text-align: left;
