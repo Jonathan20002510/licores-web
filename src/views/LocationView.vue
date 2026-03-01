@@ -3,7 +3,6 @@
     <h1 class="page-title">Mi ubicación</h1>
     <div v-if="loading" class="loading">Cargando...</div>
     <template v-else>
-      <!-- Mapa (como en Flutter) -->
       <div class="map-wrap">
         <div ref="mapRef" class="map"></div>
         <button
@@ -18,10 +17,8 @@
         </button>
       </div>
 
-      <!-- Mensaje si no hay ubicación guardada -->
       <p v-if="initialMessage" class="initial-message">{{ initialMessage }}</p>
 
-      <!-- Dirección de referencia -->
       <div class="form">
         <label>
           <span class="label-text">Dirección de referencia</span>
@@ -44,17 +41,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from 'vue'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import { http } from '../services/http'
 import NavBar from '../components/NavBar.vue'
 
 const DEFAULT_LAT = -0.305057
 const DEFAULT_LNG = -78.457755
 
+const googleMapsKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined
+const useGoogleMaps = Boolean(googleMapsKey?.trim())
+
 const mapRef = ref<HTMLElement | null>(null)
-let map: L.Map | null = null
-let marker: L.Marker | null = null
+let mapLeaflet: import('leaflet').Map | null = null
+let markerLeaflet: import('leaflet').Marker | null = null
+let mapGoogle: google.maps.Map | null = null
+let markerGoogle: google.maps.Marker | null = null
 
 const loading = ref(true)
 const saving = ref(false)
@@ -66,40 +66,116 @@ const locationDescription = ref('')
 const latitude = ref<number>(DEFAULT_LAT)
 const longitude = ref<number>(DEFAULT_LNG)
 
-function initMap() {
+function loadGoogleMapsScript(): Promise<void> {
+  if ((window as unknown as { __gmapsLoaded?: boolean }).__gmapsLoaded) {
+    return Promise.resolve()
+  }
+  return new Promise((resolve, reject) => {
+    const g = window as unknown as { google?: unknown; __gmapsLoaded?: boolean }
+    if (g.google?.maps?.Map) {
+      g.__gmapsLoaded = true
+      resolve()
+      return
+    }
+    const script = document.createElement('script')
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(googleMapsKey!)}`
+    script.async = true
+    script.defer = true
+    script.onload = () => {
+      (window as unknown as { __gmapsLoaded?: boolean }).__gmapsLoaded = true
+      resolve()
+    }
+    script.onerror = () => reject(new Error('Error al cargar Google Maps'))
+    document.head.appendChild(script)
+  })
+}
+
+function initGoogleMap() {
+  if (!mapRef.value || !window.google?.maps) return
+  const center = { lat: latitude.value, lng: longitude.value }
+  mapGoogle = new google.maps.Map(mapRef.value, {
+    center,
+    zoom: 15,
+    mapTypeControl: true,
+    streetViewControl: false,
+    fullscreenControl: true,
+    zoomControl: true,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+  })
+  markerGoogle = new google.maps.Marker({
+    position: center,
+    map: mapGoogle,
+    draggable: true,
+    title: 'Tu ubicación',
+  })
+  markerGoogle.addListener('dragend', () => {
+    const p = markerGoogle!.getPosition()
+    if (p) {
+      latitude.value = p.lat()
+      longitude.value = p.lng()
+    }
+  })
+  mapGoogle.addListener('click', (e: google.maps.MapMouseEvent) => {
+    const latLng = e.latLng
+    if (latLng) {
+      latitude.value = latLng.lat()
+      longitude.value = latLng.lng()
+      markerGoogle?.setPosition(latLng)
+    }
+  })
+}
+
+async function initLeafletMap() {
   if (!mapRef.value) return
-  map = L.map(mapRef.value).setView([latitude.value, longitude.value], 15)
+  const L = await import('leaflet')
+  await import('leaflet/dist/leaflet.css')
+  mapLeaflet = L.map(mapRef.value).setView([latitude.value, longitude.value], 15)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap',
-  }).addTo(map)
-
+  }).addTo(mapLeaflet)
   const icon = L.divIcon({
     className: 'marker-pin',
     html: '<span style="background:#8a2be2;width:24px;height:24px;border-radius:50%;display:block;border:3px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.3);"></span>',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   })
-  marker = L.marker([latitude.value, longitude.value], { icon, draggable: true })
-    .addTo(map!)
+  markerLeaflet = L.marker([latitude.value, longitude.value], { icon, draggable: true })
+    .addTo(mapLeaflet)
     .on('dragend', () => {
-      const pos = marker!.getLatLng()
+      const pos = markerLeaflet!.getLatLng()
       latitude.value = pos.lat
       longitude.value = pos.lng
     })
-
-  map.on('click', (e: L.LeafletMouseEvent) => {
+  mapLeaflet.on('click', (e: { latlng: { lat: number; lng: number } }) => {
     const { lat, lng } = e.latlng
     latitude.value = lat
     longitude.value = lng
-    marker?.setLatLng([lat, lng])
+    markerLeaflet?.setLatLng([lat, lng])
   })
 }
 
 function updateMapPosition() {
   const lat = latitude.value
   const lng = longitude.value
-  marker?.setLatLng([lat, lng])
-  map?.setView([lat, lng], map.getZoom())
+  if (markerGoogle && mapGoogle) {
+    const pos = new google.maps.LatLng(lat, lng)
+    markerGoogle.setPosition(pos)
+    mapGoogle.panTo(pos)
+  }
+  if (markerLeaflet && mapLeaflet) {
+    markerLeaflet.setLatLng([lat, lng])
+    mapLeaflet.setView([lat, lng], mapLeaflet.getZoom())
+  }
+}
+
+async function initMap() {
+  if (!mapRef.value) return
+  if (useGoogleMaps) {
+    await loadGoogleMapsScript()
+    initGoogleMap()
+  } else {
+    await initLeafletMap()
+  }
 }
 
 onMounted(async () => {
@@ -122,11 +198,12 @@ onMounted(async () => {
     loading.value = false
   }
   await nextTick()
-  initMap()
+  await initMap()
 })
 
 watch([latitude, longitude], () => {
-  if (map && marker) updateMapPosition()
+  if (mapGoogle && markerGoogle) updateMapPosition()
+  if (mapLeaflet && markerLeaflet) updateMapPosition()
 })
 
 function useCurrentLocation() {
@@ -149,6 +226,11 @@ function useCurrentLocation() {
       message.value = 'No se pudo obtener la ubicación. Revisa los permisos del navegador.'
       isError.value = true
       gettingLocation.value = false
+    },
+    {
+      enableHighAccuracy: false,
+      maximumAge: 60000,
+      timeout: 12000,
     }
   )
 }
