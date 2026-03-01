@@ -9,7 +9,10 @@
       <span class="nav-label">Pedidos</span>
     </router-link>
     <router-link to="/cart" class="nav-link">
-      <span class="nav-icon">🛒</span>
+      <span class="nav-icon-wrap">
+        <span class="nav-icon">🛒</span>
+        <span v-if="cartCount > 0" class="nav-badge">{{ cartBadgeText }}</span>
+      </span>
       <span class="nav-label">Carrito</span>
     </router-link>
     <router-link to="/profile" class="nav-link">
@@ -23,13 +26,21 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getToken } from '../services/http'
+import { useCartStore } from '../stores/cart'
 
 const route = useRoute()
+const cartStore = useCartStore()
 
 const showNav = computed(() => {
   if (!getToken()) return false
   const name = route.name as string
   return ['Home', 'Orders', 'Cart', 'Profile'].includes(name)
+})
+
+const cartCount = computed(() => cartStore.itemCount)
+const cartBadgeText = computed(() => {
+  const n = cartCount.value
+  return n > 99 ? '99+' : String(n)
 })
 </script>
 
@@ -73,6 +84,10 @@ const showNav = computed(() => {
   color: #fff;
   box-shadow: 0 2px 8px rgba(138, 43, 226, 0.35);
 }
+.nav-icon-wrap {
+  position: relative;
+  display: inline-block;
+}
 .nav-icon {
   width: 44px;
   height: 44px;
@@ -84,6 +99,22 @@ const showNav = computed(() => {
   background: #f0f0f0;
   color: #666;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.nav-badge {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 50%;
+  background: #e53935;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .nav-label {
   line-height: 1.2;
