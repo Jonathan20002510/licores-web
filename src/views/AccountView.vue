@@ -16,7 +16,7 @@
             placeholder="Tu nombre"
             required
           />
-          <label class="label">Teléfono</label>
+          <label class="label">Teléfono.</label>
           <input
             v-model="form.phone"
             type="tel"
