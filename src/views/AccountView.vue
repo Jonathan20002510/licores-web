@@ -16,8 +16,6 @@
             placeholder="Tu nombre"
             required
           />
-          <label class="label">Correo electrónico</label>
-          <p class="email-readonly">{{ user.email }}</p>
           <label class="label">Teléfono</label>
           <input
             v-model="form.phone"
@@ -25,6 +23,8 @@
             class="input"
             placeholder="Ej: 0991234567"
           />
+          <label class="label">Correo electrónico</label>
+          <p class="email-readonly">{{ user.email }}</p>
           <button type="submit" class="btn-primary" :disabled="saving">
             {{ saving ? 'Guardando...' : 'Guardar cambios' }}
           </button>
