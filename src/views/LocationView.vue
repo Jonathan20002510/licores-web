@@ -96,10 +96,10 @@ function initGoogleMap() {
   mapGoogle = new google.maps.Map(mapRef.value, {
     center,
     zoom: 15,
-    mapTypeControl: true,
+    mapTypeControl: false,
     streetViewControl: false,
-    fullscreenControl: true,
-    zoomControl: true,
+    fullscreenControl: false,
+    zoomControl: false,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
   })
   markerGoogle = new google.maps.Marker({
