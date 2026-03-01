@@ -101,6 +101,7 @@ function initGoogleMap() {
     fullscreenControl: false,
     zoomControl: false,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
+    gestureHandling: 'greedy',
   })
   markerGoogle = new google.maps.Marker({
     position: center,
