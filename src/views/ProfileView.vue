@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1 class="page-title">Tú</h1>
+   
     <div v-if="loading" class="loading">Cargando...</div>
     <template v-else>
       <!-- Tarjeta usuario (como Flutter: tap → perfil) -->
