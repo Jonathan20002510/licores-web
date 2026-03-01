@@ -30,10 +30,7 @@
           </button>
         </form>
       </div>
-      <div v-if="user.location_description" class="card info-card">
-        <p><strong>Dirección:</strong> {{ user.location_description }}</p>
-        <router-link to="/location" class="link">Editar dirección y ubicación ›</router-link>
-      </div>
+
     </template>
     <NavBar />
   </div>
