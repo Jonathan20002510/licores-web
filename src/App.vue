@@ -16,11 +16,14 @@ import { ref, onMounted } from 'vue'
 
 const isMobile = ref(false)
 
-// Solo el ancho REAL de la pantalla (no cambia al redimensionar ni en DevTools).
-// PC: screen.width = 1920, 1366... → bloqueado. Teléfono: 390, 414... → permitido.
+// User-Agent de móvil + ancho real de pantalla (screen.width no cambia en DevTools ni al redimensionar).
+// PC: UA de escritorio o screen.width > 1024 → bloqueado. Teléfono: UA móvil y screen pequeño → permitido.
 function checkMobile(): boolean {
-  if (typeof screen === 'undefined') return false
-  return screen.width <= 1024
+  if (typeof navigator === 'undefined' || typeof screen === 'undefined') return false
+  const ua = navigator.userAgent || navigator.vendor || ''
+  const uaIsMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|Silk/i.test(ua)
+  const screenSmall = screen.width <= 1024
+  return uaIsMobile && screenSmall
 }
 
 onMounted(() => {
