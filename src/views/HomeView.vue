@@ -3,8 +3,7 @@
     <!-- Un solo bloque: Licores + buscador + categorías (mismo gradiente, sin separación) -->
     <header class="header-gradient">
       <div class="header-inner">
-        <h1 class="header-title">Licores</h1>
-        <router-link v-if="hasToken" to="/cart" class="cart-link">Carrito ({{ cartCount }})</router-link>
+        <h1 class="header-title">PIFIX</h1>
       </div>
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
