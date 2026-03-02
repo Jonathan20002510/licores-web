@@ -2,7 +2,7 @@
   <div class="page">
     <div class="page-inner">
       <div class="card">
-        <!-- Logo -->
+        <!-- Logo (mismo que en Registro) -->
         <div class="logo-wrap">
           <span class="logo-icon">🍷</span>
         </div>
@@ -196,9 +196,9 @@ async function login() {
   text-align: center;
 }
 .logo-wrap {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 24px;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
   border-radius: 24px;
   background: rgba(138, 43, 226, 0.1);
   box-shadow: 0 8px 24px rgba(138, 43, 226, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -207,7 +207,7 @@ async function login() {
   justify-content: center;
 }
 .logo-icon {
-  font-size: 48px;
+  font-size: 44px;
 }
 .title {
   margin: 0 0 8px;
