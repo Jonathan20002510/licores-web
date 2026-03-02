@@ -21,9 +21,11 @@ function checkMobile(): boolean {
   const ua = navigator.userAgent || navigator.vendor || ''
   const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|Silk/i
   const uaIsMobile = mobileRegex.test(ua)
-  const widthOk = window.innerWidth <= 1024
-  // Solo permitir si el navegador es móvil Y la pantalla es estrecha (evita PC con ventana achicada)
-  return uaIsMobile && widthOk
+  const viewportOk = window.innerWidth <= 1024
+  // screen.width es el ancho real del dispositivo: en PC es el monitor (ej. 1920), en celular es pequeño (ej. 390)
+  // Así evitamos que en PC con DevTools emulando móvil (UA + viewport pequeños) entre igual
+  const screenSmall = typeof screen !== 'undefined' && screen.width <= 1024
+  return uaIsMobile && viewportOk && screenSmall
 }
 
 let resizeHandler: () => void
