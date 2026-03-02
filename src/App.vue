@@ -21,7 +21,7 @@ const isMobile = ref(false)
 function checkMobile(): boolean {
   if (typeof navigator === 'undefined' || typeof screen === 'undefined') return false
   const ua = navigator.userAgent || navigator.vendor || ''
-  const uaIsMobile = /Android|iPhone|iPad|iPod/i.test(ua)
+  const uaIsMobile = /iPhone/i.test(ua)
   const screenSmall = screen.width <= 1024
   return uaIsMobile && screenSmall
 }
