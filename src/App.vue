@@ -12,32 +12,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const isMobile = ref(true)
+const isMobile = ref(false)
 
+// Solo el ancho REAL de la pantalla (no cambia al redimensionar ni en DevTools).
+// PC: screen.width = 1920, 1366... → bloqueado. Teléfono: 390, 414... → permitido.
 function checkMobile(): boolean {
-  if (typeof navigator === 'undefined' || typeof window === 'undefined') return true
-  const ua = navigator.userAgent || navigator.vendor || ''
-  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|Silk/i
-  const uaIsMobile = mobileRegex.test(ua)
-  const viewportOk = window.innerWidth <= 1024
-  // screen.width es el ancho real del dispositivo: en PC es el monitor (ej. 1920), en celular es pequeño (ej. 390)
-  // Así evitamos que en PC con DevTools emulando móvil (UA + viewport pequeños) entre igual
-  const screenSmall = typeof screen !== 'undefined' && screen.width <= 1024
-  return uaIsMobile && viewportOk && screenSmall
+  if (typeof screen === 'undefined') return false
+  return screen.width <= 1024
 }
-
-let resizeHandler: () => void
 
 onMounted(() => {
   isMobile.value = checkMobile()
-  resizeHandler = () => { isMobile.value = checkMobile() }
-  window.addEventListener('resize', resizeHandler)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', resizeHandler)
+  if (isMobile.value) {
+    const meta = document.querySelector('meta[name="viewport"]')
+    if (meta) meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+  }
 })
 </script>
 
