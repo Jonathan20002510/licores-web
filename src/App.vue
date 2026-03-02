@@ -17,12 +17,13 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const isMobile = ref(true)
 
 function checkMobile(): boolean {
-  if (typeof navigator === 'undefined') return true
+  if (typeof navigator === 'undefined' || typeof window === 'undefined') return true
   const ua = navigator.userAgent || navigator.vendor || ''
   const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|Silk/i
-  if (mobileRegex.test(ua)) return true
-  if (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024) return true
-  return false
+  const uaIsMobile = mobileRegex.test(ua)
+  const widthOk = window.innerWidth <= 1024
+  // Solo permitir si el navegador es móvil Y la pantalla es estrecha (evita PC con ventana achicada)
+  return uaIsMobile && widthOk
 }
 
 let resizeHandler: () => void
